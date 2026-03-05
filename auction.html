@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오버워치 경매 드래프트 (유찰 시스템)</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 { color: #f99e1a; }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .status-bar {
+            background-color: #555;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .player-card {
+            background-color: #f99e1a;
+            color: #2b2b2b;
+            padding: 20px;
+            margin: 10px 0 20px 0;
+            border-radius: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .bidding-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .team-box {
+            background-color: #444;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            font-size: 1.2em;
+            text-align: right;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .action-btn {
+            background-color: #f99e1a;
+            color: #2b2b2b;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 45%;
+        }
+        .action-btn:hover { background-color: #e08e17; }
+        .pass-btn {
+            background-color: #777;
+            color: #fff;
+        }
+        .pass-btn:hover { background-color: #555; }
+        
+        .teams-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .team-result {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .team-result h3 {
+            color: #f99e1a;
+            border-bottom: 2px solid #555;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 5px 0; border-bottom: 1px dashed #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏆 오버워치 경매 드래프트</h1>
+    
+    <div id="draft-section">
+        <div class="status-bar">
+            <span id="pool-count">남은 참가자: 준비 중</span>
+            <span id="unsold-count">유찰 대기자: 0명</span>
+        </div>
+
+        <div class="player-card" id="current-player">
+            현재 경매 대상: 준비 중...
+        </div>
+
+        <div class="bidding-area" id="bidding-boxes">
+            </div>
+
+        <div class="button-group">
+            <button class="action-btn" onclick="processBid()">낙찰 처리</button>
+            <button class="action-btn pass-btn" onclick="passPlayer()">유찰 (대기석으로)</button>
+        </div>
+    </div>
+
+    <div id="end-message" style="display:none;">
+        <h2>🎉 모든 참가자의 드래프트가 종료되었습니다! 아래 결과를 확인하세요.</h2>
+    </div>
+
+    <div class="teams-container" id="results-boxes">
+        </div>
+</div>
+
+<script>
+    // 원본 참가자 명단 (총 16명)
+    const initialPlayers = [
+        { name: "버팔로윙", main: "수정예정" },
+        { name: "성규", main: "수정예정" },
+        { name: "카다이", main: "수정예정" },
+        { name: "당근", main: "수정예정" },
+        { name: "서연", main: "수정예정" },
+        { name: "누노리", main: "수정예정" },
+        { name: "윽", main: "수정예정" },
+        { name: "원남", main: "수정예정" },
+        { name: "하연", main: "수정예정" },
+        { name: "주주", main: "수정예정" },
+        { name: "광우", main: "수정예정" },
+        { name: "유진", main: "수정예정" },
+        { name: "명지", main: "수정예정" },
+        { name: "에르", main: "수정예정" },
+        { name: "김영철", main: "수정예정" },
+        { name: "다오다오", main: "수정예정" }
+    ];
+
+    // 팀장 4명 데이터 (이름 업데이트 완료)
+    let teams = [
+        { id: 0, name: "기림", budget: 1000, members: [] },
+        { id: 1, name: "JB", budget: 1000, members: [] },
+        { id: 2, name: "뉴쏠", budget: 1000, members: [] },
+        { id: 3, name: "생무룩", budget: 1000, members: [] }
+    ];
+
+    let playerPool = [];       // 현재 경매 대기열
+    let unsoldPlayers = [];    // 유찰 대기석
+    let currentPlayer = null;  // 현재 화면에 띄워진 참가자
+
+    // 초기 UI 세팅
+    function initUI() {
+        const biddingArea = document.getElementById("bidding-boxes");
+        const resultsArea = document.getElementById("results-boxes");
+        
+        biddingArea.innerHTML = "";
+        resultsArea.innerHTML = "";
+
+        teams.forEach(team => {
+            biddingArea.innerHTML += `
+                <div class="team-box">
+                    <h2>${team.name}</h2>
+                    <p>잔액: <span id="budget-${team.id}">${team.budget}</span>원</p>
+                    <input type="number" id="bid-${team.id}" min="0" placeholder="입찰가"> 원
+                </div>
+            `;
+            resultsArea.innerHTML += `
+                <div class="team-result">
+                    <h3>${team.name} 팀 (남은 돈: <span id="final-budget-${team.id}">${team.budget}</span>원)</h3>
+                    <ul id="team-${team.id}-list"></ul>
+                </div>
+            `;
+        });
+    }
+
+    // 배열 랜덤 섞기
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 다음 참가자 불러오기 로직
+    function loadNextPlayer() {
+        if (playerPool.length === 0) {
+            if (unsoldPlayers.length > 0) {
+                alert("정규 명단이 끝났습니다. 유찰 대기석에 있는 인원들로 재경매를 시작합니다!");
+                playerPool = [...unsoldPlayers]; 
+                unsoldPlayers = []; 
+                shuffleArray(playerPool); 
+            } else {
+                document.getElementById("draft-section").style.display = "none";
+                document.getElementById("end-message").style.display = "block";
+                return;
+            }
+        }
+
+        currentPlayer = playerPool.shift(); 
+
+        // [수정됨] 화면 업데이트 시 모스트 챔피언 부분을 display:none 으로 숨김
+        document.getElementById("current-player").innerHTML = `🔥 ${currentPlayer.name} <span style="display:none;">(모스트: ${currentPlayer.main})</span>`;
+        document.getElementById("pool-count").innerText = `남은 대기열: ${playerPool.length}명`;
+        document.getElementById("unsold-count").innerText = `유찰 대기석: ${unsoldPlayers.length}명`;
+        
+        teams.forEach(team => {
+            document.getElementById(`bid-${team.id}`).value = '';
+        });
+    }
+
+    // [유찰 처리] 버튼 클릭 시
+    function passPlayer() {
+        unsoldPlayers.push(currentPlayer); 
+        alert(`${currentPlayer.name}님이 유찰 대기석으로 이동했습니다.`);
+        loadNextPlayer(); 
+    }
+
+    // [낙찰 처리] 버튼 클릭 시
+    function processBid() {
+        let bids = [];
+        
+        for (let team of teams) {
+            let bidAmount = parseInt(document.getElementById(`bid-${team.id}`).value) || 0;
+            if (bidAmount > team.budget) {
+                alert(`[${team.name}]의 잔액이 부족합니다!`);
+                return; 
+            }
+            bids.push({ teamId: team.id, amount: bidAmount });
+        }
+
+        let maxBid = Math.max(...bids.map(b => b.amount));
+
+        if (maxBid === 0) {
+            passPlayer();
+            return;
+        }
+
+        let highestBidders = bids.filter(b => b.amount === maxBid);
+
+        if (highestBidders.length > 1) {
+            let tieNames = highestBidders.map(b => teams[b.teamId].name).join(", ");
+            alert(`최고 입찰가(${maxBid}원)가 동점입니다! [${tieNames}]\n입찰 금액을 다시 입력해주세요.`);
+            return; 
+        }
+
+        let winnerId = highestBidders[0].teamId;
+        teams[winnerId].budget -= maxBid;
+        teams[winnerId].members.push(currentPlayer);
+        alert(`🎉 ${teams[winnerId].name} 팀이 ${maxBid}원에 낙찰!`);
+
+        updateUI(); 
+        loadNextPlayer(); 
+    }
+
+    // 예산 및 하단 리스트 UI 갱신
+    function updateUI() {
+        teams.forEach(team => {
+            document.getElementById(`budget-${team.id}`).innerText = team.budget;
+            document.getElementById(`final-budget-${team.id}`).innerText = team.budget;
+            
+            // [수정됨] 하단 팀원 명단에서도 모스트 챔피언 부분을 display:none 으로 숨김
+            const listHtml = team.members.map(m => `<li>${m.name} <span style="display:none;">(${m.main})</span></li>`).join('');
+            document.getElementById(`team-${team.id}-list`).innerHTML = listHtml;
+        });
+    }
+
+    // --- 프로그램 시작 지점 ---
+    initUI();
+    playerPool = [...initialPlayers]; 
+    shuffleArray(playerPool); 
+    loadNextPlayer(); 
+
+</script>
+
+</body>
+</html>
