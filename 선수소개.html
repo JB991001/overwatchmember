@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overwatch All 19 Players Profiles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #0d0d12;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            padding: 20px 0;
+            place-items: center;
+        }
+
+        .slide-container {
+            align-items: flex-start;
+            background-color: #1c1e23;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Noto Sans KR', 'Poppins', sans-serif;
+            height: 720px;
+            justify-content: flex-start;
+            overflow: hidden;
+            padding: 60px 80px;
+            position: relative;
+            width: 1280px;
+        }
+
+        .title-layout {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+        .title-layout h1 { color: #fff; font-size: 80px; margin: 0; font-family: 'Poppins', sans-serif; letter-spacing: 2px; }
+        .title-layout h1 span { color: #f19938; }
+        .title-layout p { color: #9aa0a6; font-size: 24px; margin-top: 20px; }
+
+        .slide-container h2 { color: #ffffff; font-weight: 800; font-family: 'Poppins', 'Noto Sans KR', sans-serif; margin: 0; }
+        .slide-container p { color: #9aa0a6; font-family: 'Noto Sans KR', sans-serif; margin: 0; }
+
+        .slide-header { display: flex; align-items: center; margin-bottom: 50px; }
+        .header-bar { width: 8px; height: 40px; background-color: #f19938; margin-right: 20px; border-radius: 4px; }
+        .slide-title { font-size: 42px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .content-area { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; width: 100%; height: 100%; }
+        .section-title { font-size: 26px; font-weight: 700; color: #f19938; margin-bottom: 25px; display: flex; align-items: center; }
+        .section-title i { margin-right: 12px; font-size: 24px; }
+
+        .radar-box {
+            background-color: #242831; border-radius: 12px; height: 440px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
+        }
+        .radar-chart { width: 100%; height: 100%; overflow: visible; }
+        .radar-bg-line { fill: none; stroke: #3a3f47; stroke-width: 1.5; stroke-dasharray: 3 3; }
+        .radar-axis { stroke: #3a3f47; stroke-width: 1.5; }
+        .radar-data-fill { fill: rgba(241, 153, 56, 0.25); stroke: #f19938; stroke-width: 3; }
+        .radar-data-point { fill: #ffffff; stroke: #f19938; stroke-width: 2.5; }
+        .radar-label { fill: #d1d5db; font-size: 15px; font-weight: 500; font-family: 'Noto Sans KR', sans-serif; }
+        .radar-label.highlight { fill: #f19938; font-weight: 700; }
+
+        .champ-cards-container { display: flex; flex-direction: column; gap: 20px; }
+        .champ-card {
+            display: flex; align-items: center; background-color: #242831;
+            border-radius: 12px; padding: 18px 30px; border-left: 6px solid #f19938;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .champ-card .rank {
+            font-size: 38px; font-weight: 900; color: #dcb651; margin-right: 35px;
+            width: 30px; text-align: center; font-family: 'Poppins', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .champ-card .rank.sub { color: #78828c; text-shadow: none; }
+        .champ-card .image-wrapper {
+            width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+            margin-right: 25px; border: 3px solid #f19938; flex-shrink: 0; background-color: #1c1e23;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .champ-card .image-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+        .champ-card .image-wrapper i { font-size: 40px; color: #f19938; }
+        .champ-card .champ-info h4 { font-size: 26px; font-weight: 700; color: #ffffff; margin: 0 0 6px 0; letter-spacing: 0.5px; }
+        .champ-card .champ-info p { font-size: 16px; color: #9aa0a6; font-weight: 400; margin: 0; }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+    // =========================================================================
+    // 💡 데이터 입력 부분 (이곳의 내용만 수정하시면 화면에 100% 자동 반영됩니다)
+    // =========================================================================
+    // stats 순서: [오더능력, 게임이해도, 피지컬, 실력보정치, 내전평가, 가용캐릭폭]
+    
+    const playerData = [
+        {
+            name: "JB", role: "탱커", stats: [10, 10, 8, 8, 8, 9], 
+            champs: [
+                { name: "자리야", type: "메인 포지션 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f46f5cda1ed2e4c85265abefaa334a13d71de6a8a3a29b47e85da335da4bb487.png" },
+                { name: "윈스턴", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f311c034b2f2d93e2b26c6d9a0d82d49b5c2a41d08e9a265691d57b37ed978a3.png" },
+                { name: "오리사", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/a103d366a504a7962eb74f66a2e411b02130006297314227c735955ba0c686e0.png" }
+            ]
+        },
+        {
+            name: "기림", role: "탱커", stats: [8, 8, 8, 8, 8, 8],
+            champs: [
+                { name: "시그마", type: "메인 포지션 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/cb43806c9a3bf3ebfc31464b56832fbcd8da7e828453cc14b43444fc27fc3cc6.png" },
+                { name: "도미나", type: "서브 모스트 / 탱커", img: "" },
+                { name: "윈스턴", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f311c034b2f2d93e2b26c6d9a0d82d49b5c2a41d08e9a265691d57b37ed978a3.png" }
+            ]
+        },
+        {
+            name: "버팔로윙", role: "딜러", stats: [6, 10, 6, 7, 7, 8],
+            champs: [
+                { name: "에코", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/49d033a886ce05501fb75dc0ec665e8a6c8e3ccba950fc1d8b16e865f12efcc7.png" },
+                { name: "엠레", type: "서브 모스트 / 딜러", img: "" },
+                { name: "벤처", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/76922ed7c822df302fb0edec7f3fbdab7d0fb83bc68cebc019cd22756dfaf4da.png" }
+            ]
+        },
+        {
+            name: "성규", role: "딜러", stats: [7, 9, 5, 6, 6, 5],
+            champs: [
+                { name: "파라", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/e77c2240b9be00c8b672f0402ae5b8e99ce5b8cf0fdbd5ebf41ec4dbaf519965.png" },
+                { name: "정크랫", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/0e1b3d7b27fcad96c469b76c8e3100a75ea9c67a57c162529a99725f0580971b.png" },
+                { name: "안란", type: "서브 모스트 / 딜러", img: "" }
+            ]
+        },
+        {
+            name: "카다이", role: "딜러", stats: [5, 8, 7, 7, 8, 5],
+            champs: [
+                { name: "벤데타", type: "메인 포지션 / 딜러", img: "" },
+                { name: "벤쳐", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/76922ed7c822df302fb0edec7f3fbdab7d0fb83bc68cebc019cd22756dfaf4da.png" },
+                { name: "프레야", type: "서브 모스트 / 딜러", img: "" }
+            ]
+        },
+        {
+            name: "당근", role: "힐러", stats: [4, 9, 6, 7, 7, 7],
+            champs: [
+                { name: "키리코", type: "메인 포지션 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8d4fc9e77691ed7323812239fc8b55694c99edff15b4971c26f04eb8cff34ca8.png" },
+                { name: "아나", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/672fc10cdd36fb8849646b1eb888ecce9319e34e5aab64c18eb3d4d42051db5b.png" },
+                { name: "모이라", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/26bd4fcb309fec9eb43171a41b52a514d026f8ed8ec60a638148e6ef92d19d67.png" }
+            ]
+        },
+        {
+            name: "서연", role: "힐러", stats: [6, 8, 5, 7, 8, 2],
+            champs: [
+                { name: "디바", type: "메인 포지션 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8040bc0bc50f68e0a8111e06fa59cc0662d51ee2bc3ddf1cf34f6bbbb5bd8969.png" },
+                { name: "라인하르트", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/b050d2af3a2a472c9bc5e98b0bf4ef21b2baebcb2042079944f772152869502b.png" },
+                { name: "도미나", type: "서브 모스트 / 힐러", img: "" }
+            ]
+        },
+        {
+            name: "누노리", role: "힐러", stats: [4, 7, 6, 7, 6, 8],
+            champs: [
+                { name: "우양", type: "메인 포지션 / 힐러", img: "" },
+                { name: "미즈키", type: "서브 모스트 / 힐러", img: "" },
+                { name: "키리코", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8d4fc9e77691ed7323812239fc8b55694c99edff15b4971c26f04eb8cff34ca8.png" }
+            ]
+        },
+        {
+            name: "육", role: "힐러", stats: [3, 9, 5, 7, 6, 5],
+            champs: [
+                { name: "메르시", type: "메인 포지션 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/7f3a9a14a2ad5e921d723dd85e683707e05423bc272fddb2b810842db745a7b1.png" },
+                { name: "주노", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/6cb1d6de37319e37fcba55363fb6de5f958ee895821bc3cd944cc96f7ffc4d37.png" },
+                { name: "루시우", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f470ed2dfcbcc871ea40772ee5f7eafc50a049d5921ec5bdfd92476568c07221.png" }
+            ]
+        },
+        {
+            name: "뉴쏠", role: "탱커", stats: [5, 7, 5, 6, 6, 7],
+            champs: [
+                { name: "윈스턴", type: "메인 포지션 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f311c034b2f2d93e2b26c6d9a0d82d49b5c2a41d08e9a265691d57b37ed978a3.png" },
+                { name: "시그마", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/cb43806c9a3bf3ebfc31464b56832fbcd8da7e828453cc14b43444fc27fc3cc6.png" },
+                { name: "자리야", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f46f5cda1ed2e4c85265abefaa334a13d71de6a8a3a29b47e85da335da4bb487.png" }
+            ]
+        },
+        {
+            name: "호랑", role: "탱커", stats: [4, 6, 6, 7, 7, 5],
+            champs: [
+                { name: "디바", type: "메인 포지션 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8040bc0bc50f68e0a8111e06fa59cc0662d51ee2bc3ddf1cf34f6bbbb5bd8969.png" },
+                { name: "윈스턴", type: "서브 모스트 / 탱커", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f311c034b2f2d93e2b26c6d9a0d82d49b5c2a41d08e9a265691d57b37ed978a3.png" },
+                { name: "도미나", type: "서브 모스트 / 탱커", img: "" }
+            ]
+        },
+        {
+            name: "원남", role: "딜러", stats: [2, 4, 8, 7, 6, 6],
+            champs: [
+                { name: "소전", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8904df6b0ba31498b584d437f8842e128b7e2cc461717f91cd2d9d9685a9bc83.png" },
+                { name: "애쉬", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/b520cfcff643b9d9eb281df6f8f53702dfab96da99856f6b4b455648ee2cc9d9.png" },
+                { name: "솔져", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/252b4dc2013f9cdd36f862db8061dc139f1ff456e36d4dfebda2c3e1eec5b32d.png" }
+            ]
+        },
+        {
+            name: "하연", role: "힐러", stats: [4, 6, 4, 4, 4, 5],
+            champs: [
+                { name: "우양", type: "메인 포지션 / 힐러", img: "" },
+                { name: "주노", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/6cb1d6de37319e37fcba55363fb6de5f958ee895821bc3cd944cc96f7ffc4d37.png" },
+                { name: "루시우", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/f470ed2dfcbcc871ea40772ee5f7eafc50a049d5921ec5bdfd92476568c07221.png" }
+            ]
+        },
+        {
+            name: "주주", role: "힐러", stats: [4, 4, 3, 4, 4, 5],
+            champs: [
+                { name: "주노", type: "메인 포지션 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/6cb1d6de37319e37fcba55363fb6de5f958ee895821bc3cd944cc96f7ffc4d37.png" },
+                { name: "일리아리", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/768019056c7ccb837424075459f0f952f44ad2d3b2c866f8cf0bd159edbb0455.png" },
+                { name: "미즈키", type: "서브 모스트 / 힐러", img: "" }
+            ]
+        },
+        {
+            name: "광우", role: "딜러", stats: [2, 3, 3, 2, 3, 5],
+            champs: [
+                { name: "소젼", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/8904df6b0ba31498b584d437f8842e128b7e2cc461717f91cd2d9d9685a9bc83.png" },
+                { name: "바스티온", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/bd3ff0de6537dbf2d70cb99df8a349c2598bece88a6d63d8fc77142b4d96a79e.png" },
+                { name: "솔저76", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/252b4dc2013f9cdd36f862db8061dc139f1ff456e36d4dfebda2c3e1eec5b32d.png" }
+            ]
+        },
+        {
+            name: "유진", role: "힐러", stats: [1, 2, 3, 1, 2, 3],
+            champs: [
+                { name: "주노", type: "메인 포지션 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/6cb1d6de37319e37fcba55363fb6de5f958ee895821bc3cd944cc96f7ffc4d37.png" },
+                { name: "바티스트", type: "서브 모스트 / 힐러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/92723c72b8c9d1a3c65c6ab4822f3ca56cc4b85c27f6a72e816a7516df5992cb.png" },
+                { name: "우양", type: "서브 모스트 / 힐러", img: "" }
+            ]
+        },
+        {
+            name: "명지", role: "딜러", stats: [1, 2, 1, 1, 1, 1],
+            champs: [
+                { name: "리퍼", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/dd8d54203da7e436f56402ecfecb8982bb6b82bc0e38eb8ce9ab21927ba75c82.png" },
+                { name: "에르", type: "서브 모스트 / 딜러", img: "" },
+                { name: "정보 없음", type: "서브 모스트 / 딜러", img: "" }
+            ]
+        },
+        {
+            name: "에르", role: "딜러", stats: [1, 1, 2, 1, 1, 1],
+            champs: [
+                { name: "솔저", type: "메인 포지션 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/252b4dc2013f9cdd36f862db8061dc139f1ff456e36d4dfebda2c3e1eec5b32d.png" },
+                { name: "엠레", type: "서브 모스트 / 딜러", img: "" },
+                { name: "리퍼", type: "서브 모스트 / 딜러", img: "https://d15f34w2p8l1cc.cloudfront.net/overwatch/dd8d54203da7e436f56402ecfecb8982bb6b82bc0e38eb8ce9ab21927ba75c82.png" }
+            ]
+        },
+        {
+            name: "김영철", role: "힐러", stats: [1, 1, 1, 1, 1, 1],
+            champs: [
+                { name: "정보 없음", type: "메인 포지션 / 힐러", img: "" },
+                { name: "정보 없음", type: "서브 모스트 / 힐러", img: "" },
+                { name: "정보 없음", type: "서브 모스트 / 힐러", img: "" }
+            ]
+        }
+    ];
+
+    // =========================================================================
+    // 레이더 차트 (육각형) 수학 계산 및 렌더링 로직 (수정하실 필요 없습니다)
+    // =========================================================================
+    const app = document.getElementById('app');
+
+    // 1. 타이틀 슬라이드 추가
+    app.innerHTML += `
+        <div class="slide-container">
+            <div class="title-layout">
+                <i class="fa-brands fa-battle-net" style="font-size: 80px; color: #f19938; margin-bottom: 20px;"></i>
+                <h1>OVERWATCH <span>19 PLAYERS</span> ANALYSIS</h1>
+                <p>인낳대 공식 선수 데이터 기반 레이더 차트 및 모스트 챔피언 프로필</p>
+            </div>
+        </div>
+    `;
+
+    // 좌표 계산 함수
+    function getPoint(value, angleDegree) {
+        const radius = (value / 10) * 130; // 10점 만점일때 반지름 130
+        const angleRad = (angleDegree - 90) * (Math.PI / 180);
+        return {
+            x: 200 + radius * Math.cos(angleRad),
+            y: 200 + radius * Math.sin(angleRad)
+        };
+    }
+
+    // 각도 매핑: 0:오더, 1:게임이해도, 2:피지컬, 3:실력보정치, 4:내전평가, 5:가용캐릭폭
+    const angles = [0, 60, 120, 180, 240, 300];
+
+    // 2. 선수별 슬라이드 생성 루프
+    playerData.forEach(player => {
+        // 배경 그리드 계산
+        let gridsHTML = '';
+        for (let r = 2; r <= 10; r += 2) {
+            let pts = angles.map(a => {
+                let p = getPoint(r, a);
+                return `${p.x},${p.y}`;
+            }).join(' ');
+            gridsHTML += `<polygon class="radar-bg-line" points="${pts}" />`;
+        }
+
+        // 축 선 계산
+        let axesHTML = angles.map(a => {
+            let p = getPoint(10, a);
+            return `<line class="radar-axis" x1="200" y1="200" x2="${p.x}" y2="${p.y}" />`;
+        }).join('');
+
+        // 선수 데이터 계산
+        let dataPts = player.stats.map((val, idx) => getPoint(val, angles[idx]));
+        let polygonPoints = dataPts.map(p => `${p.x},${p.y}`).join(' ');
+        
+        let dataPointsHTML = dataPts.map(p => 
+            `<circle class="radar-data-point" cx="${p.x}" cy="${p.y}" r="5" />`
+        ).join('');
+
+        // 텍스트 라벨링 (절대 사라지지 않도록 직접 좌표 배정)
+        const labelsHTML = `
+            <text class="radar-label" x="200" y="50" text-anchor="middle">오더 능력 (${player.stats[0]})</text>
+            <text class="radar-label" x="325" y="135" text-anchor="start" dominant-baseline="middle">게임 이해도 (${player.stats[1]})</text>
+            <text class="radar-label" x="325" y="265" text-anchor="start" dominant-baseline="middle">피지컬 (${player.stats[2]})</text>
+            <text class="radar-label" x="200" y="350" text-anchor="middle">실력 보정치 (${player.stats[3]})</text>
+            <text class="radar-label" x="75" y="265" text-anchor="end" dominant-baseline="middle">내전 평가 (${player.stats[4]})</text>
+            <text class="radar-label" x="75" y="135" text-anchor="end" dominant-baseline="middle">가용 캐릭 폭 (${player.stats[5]})</text>
+        `;
+
+        // 챔피언 카드 HTML 생성 (전부 기본 아이콘 표시로 수정)
+        let champsHTML = player.champs.map((champ, idx) => `
+            <div class="champ-card">
+                <div class="rank ${idx > 0 ? 'sub' : ''}">${idx + 1}</div>
+                <div class="image-wrapper">
+                    <i class="fa-solid fa-user-ninja"></i>
+                </div>
+                <div class="champ-info">
+                    <h4>${champ.name}</h4>
+                    <p>${champ.type}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // 슬라이드 조립
+        const slideHTML = `
+            <div class="slide-container">
+                <div class="slide-header">
+                    <div class="header-bar"></div>
+                    <h2 class="slide-title">${player.name} - PLAYER STATS & CHAMPIONS</h2>
+                </div>
+                <div class="content-area">
+                    <div>
+                        <div class="section-title">스탯 데이터 (Radar Chart)</div>
+                        <div class="radar-box">
+                            <svg class="radar-chart" viewBox="0 0 400 400">
+                                ${gridsHTML}
+                                ${axesHTML}
+                                <polygon class="radar-data-fill" points="${polygonPoints}" />
+                                ${dataPointsHTML}
+                                ${labelsHTML}
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-title"><i class="fa-solid fa-medal"></i>자신있는 챔피언 TOP 3</div>
+                        <div class="champ-cards-container">
+                            ${champsHTML}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        app.innerHTML += slideHTML;
+    });
+</script>
+</body>
+</html>
+```
