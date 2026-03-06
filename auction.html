@@ -296,7 +296,7 @@
 
         currentPlayer = playerPool.shift(); 
 
-        document.getElementById("current-player").innerHTML = `🔥 ${currentPlayer.name} <span style="display:none;">(모스트: ${currentPlayer.main})</span>`;
+        document.getElementById("current-player").innerHTML = `🔥 ${currentPlayer.name} <span style="font-size:0.7em; color:#444;"> (모스트: ${currentPlayer.main})</span>`;
         document.getElementById("pool-count").innerText = `남은 대기열: ${playerPool.length}명`;
         document.getElementById("unsold-count").innerText = `유찰 대기석: ${unsoldPlayers.length}명`;
         
